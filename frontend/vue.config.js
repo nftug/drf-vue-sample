@@ -4,6 +4,9 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
 	    ? '/static/'
 	    : '/',
+  productionSourceMap: process.env.NODE_ENV === 'production'
+		     ? false
+		     : true,
   pages: {
     index: {
       entry: "src/main.js",

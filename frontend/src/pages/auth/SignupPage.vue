@@ -189,7 +189,7 @@
 	   const status = error.response ? error.response.status : 500
 	   let message
 
-	   if (status === 403 ) {
+	   if (status === 403) {
 	     message = "アカウントは既に承認されています。"
 	   } else {
 	     message = "不正なトークンです。"
