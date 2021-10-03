@@ -118,3 +118,11 @@ dmypy.json
 # macOS + PyCharm
 .DS_Store
 .idea/
+
+# DB File & media
+db.sqlite3
+media/
+
+# Build files
+static/
+templates/

@@ -1,79 +1,81 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import api from '@/services/api'
+import Vue from "vue"
+import Vuex from "vuex"
+import api from "@/services/api"
 
 Vue.use(Vuex)
 
-// 認証情報
+// 認証情報モジュール
 const authModule = {
   strict: process.env.NODE_ENV !== 'production',
   namespaced: true,
   state: {
-    username: '',
+    username: "",
+    email: "",
+    isSuperuser: false,
     isLoggedIn: false
   },
   getters: {
     username: state => state.username,
+    email: state => state.email,
+    isSuperUser: state => state.isSuperuser,
     isLoggedIn: state => state.isLoggedIn
   },
   mutations: {
-    set (state, payload) {
+    set(state, payload) {
       state.username = payload.user.username
+      state.email = payload.user.email
+      state.isSuperuser = payload.user.is_superuser
       state.isLoggedIn = true
     },
-    clear (state) {
-      state.username = ''
+    clear(state) {
+      state.username = ""
+      state.email = ""
+      state.isSuperuser = false
       state.isLoggedIn = false
     }
   },
   actions: {
-    /**
-     * ログイン
-     */
-    login (context, payload) {
-      return api.post('/auth/jwt/create/', {
-        'username': payload.username,
-        'password': payload.password
-      })
-        .then(response => {
-          // 認証用トークンをlocalStorageに保存
-          localStorage.setItem('access', response.data.access)
-          // ユーザー情報を取得してstoreのユーザー情報を更新
-          return context.dispatch('reload')
-        })
+    // ログイン
+    login(context, payload) {
+      return api
+	.post("/auth/jwt/create/", {
+	  username: payload.username,
+	  password: payload.password
+	})
+	.then(response => {
+	  // 認証用トークンをlocalStorageに保存
+	  localStorage.setItem("access", response.data.access)
+	  // ユーザー情報を取得してstoreのユーザー情報を更新
+	  return context.dispatch("renew")
+	})
     },
-    /**
-     * ログアウト
-     */
-    logout (context) {
-      // 認証用トークンをlocalStorageから削除
-      localStorage.removeItem('access')
+    // ログアウト
+    logout(context) {
+      // 認証用トークンをlocalstorageから削除
+      localStorage.removeItem("access")
       // storeのユーザー情報をクリア
-      context.commit('clear')
+      context.commit("clear")
     },
-    /**
-     * ユーザー情報更新
-     */
-    reload (context) {
-      return api.get('/auth/users/me/')
-        .then(response => {
-          const user = response.data
-          // storeのユーザー情報を更新
-          context.commit('set', { user: user })
-          return user
-        })
+    // ユーザー情報更新
+    renew(context) {
+      return api.get("/auth/users/me/").then(response => {
+	const user = response.data
+	// storeのユーザー情報を更新
+	context.commit("set", { user: user })
+	return user
+      })
     }
   }
 }
 
-// グローバルメッセージ
+// グローバルメッセージモジュール
 const messageModule = {
   strict: process.env.NODE_ENV !== 'production',
   namespaced: true,
   state: {
-    error: '',
+    error: "",
     warnings: [],
-    info: ''
+    info: ""
   },
   getters: {
     error: state => state.error,
@@ -81,50 +83,39 @@ const messageModule = {
     info: state => state.info
   },
   mutations: {
-    set (state, payload) {
-      if (payload.error) {
-        state.error = payload.error
-      }
-      if (payload.warnings) {
-        state.warnings = payload.warnings
-      }
-      if (payload.info) {
-        state.info = payload.info
-      }
+    set(state, payload) {
+      if (payload.error)
+	state.error = payload.error
+      if (payload.warnings)
+	state.warnings = payload.warnings
+      if (payload.info)
+	state.info = payload.info
     },
-    clear (state) {
-      state.error = ''
+    clear(state) {
+      state.error = ""
       state.warnings = []
-      state.info = ''
+      state.info = ""
     }
   },
   actions: {
-    /**
-     * エラーメッセージ表示
-     */
-    setErrorMessage (context, payload) {
-      context.commit('clear')
-      context.commit('set', { 'error': payload.message })
+    // エラーメッセージ表示
+    setErrorMessage(context, payload) {
+      context.commit("clear")
+      context.commit("set", { error: payload.message })
     },
-    /**
-     * 警告メッセージ（複数）表示
-     */
-    setWarningMessages (context, payload) {
-      context.commit('clear')
-      context.commit('set', { 'warnings': payload.messages })
+    // 警告メッセージ (複数) 表示
+    setWarningMessages(context, payload) {
+      context.commit("clear")
+      context.commit("set", { warnings: payload.messages })
     },
-    /**
-     * インフォメーションメッセージ表示
-     */
-    setInfoMessage (context, payload) {
-      context.commit('clear')
-      context.commit('set', { 'info': payload.message })
+    // インフォメーションメッセージ表示
+    setInfoMessage(context, payload) {
+      context.commit("clear")
+      context.commit("set", { info: payload.message })
     },
-    /**
-     * 全メッセージ削除
-     */
-    clearMessages (context) {
-      context.commit('clear')
+    // 全メッセージ削除
+    clearMessages(context) {
+      context.commit("clear")
     }
   }
 }

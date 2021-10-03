@@ -1,19 +1,28 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
-<style>
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    color: #2c3e50;
-  }
+<script>
+ export default {
+   metaInfo() {
+     return {
+       titleTemplate: titleChunk =>
+         titleChunk ? `${titleChunk} - DRF Sample` : "DRF Sample"
+     }
+   },
+ }
+</script>
 
-  main.container {
-    border: 1px solid #cccccc;
-    margin-top: 4em;
-    padding: 2em;
-    width: 600px;
-  }
+<style>
+ #app {
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   color: #2c3e50;
+   display: flex;
+   flex-direction: column;
+   min-height: 100vh;
+   font-family: sans-serif;
+ }
 </style>

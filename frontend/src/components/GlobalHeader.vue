@@ -1,41 +1,46 @@
 <template>
-  <!-- ヘッダナビゲーション -->
+  <!-- ヘッダーナビゲーション -->
   <div id="header">
     <b-navbar type="dark" variant="dark">
-      <a class="navbar-brand" href="/">DRF Sample</a>
-      <b-navbar-nav class="ml-auto" v-if="$route.meta.requiresAuth">
-        <b-nav-item-dropdown right v-if="isLoggedIn">
-          <template slot="button-content">{{ username }}</template>
-          <b-dropdown-item href="#" @click="clickLogout">ログアウト</b-dropdown-item>
-        </b-nav-item-dropdown>
-        <b-nav-item href="#" @click="clickLogin" v-else>ログイン</b-nav-item>
+      <router-link class="navbar-brand" to="/">DRF Sample</router-link>
+      <b-navbar-nav class="ml-auto">
+
+	<template v-if="isLoggedIn">
+	  <b-nav-item-dropdown right>
+	    <template v-slot:button-content>{{ username }}</template>
+	    <b-dropdown-item to="/account">アカウントの設定</b-dropdown-item>
+	    <b-dropdown-divider></b-dropdown-divider>
+	    <b-dropdown-item href="#" v-on:click="clickLogout">ログアウト</b-dropdown-item>
+	  </b-nav-item-dropdown>
+	</template>
+
+	<template v-else>
+	  <b-nav-item to="/signup">登録</b-nav-item>
+	  <b-nav-item to="/login">ログイン</b-nav-item>
+	</template>
+
       </b-navbar-nav>
     </b-navbar>
   </div>
 </template>
 
 <script>
-  export default {
-    computed: {
-      username: function () {
-        return this.$store.getters['auth/username']
-      },
-      isLoggedIn: function () {
-        return this.$store.getters['auth/isLoggedIn']
-      }
-    },
-    methods: {
-      // ログアウトリンク押下
-      clickLogout: function () {
-        this.$store.dispatch('auth/logout')
-        this.$store.dispatch('message/setInfoMessage', { message: 'ログアウトしました。' })
-        this.$router.replace('/login')
-      },
-      // ログインリンク押下
-      clickLogin: function () {
-        this.$store.dispatch('message/clearMessages')
-        this.$router.replace('/login')
-      }
-    }
-  }
+ export default {
+   computed: {
+     username: function() {
+       return this.$store.state.auth.username
+     },
+     isLoggedIn: function() {
+       return this.$store.state.auth.isLoggedIn
+     }
+   },
+   methods: {
+     // ログアウトリンク押下
+     clickLogout: function() {
+       this.$store.dispatch("auth/logout")
+       this.$router.push("/login")
+       this.$store.dispatch("message/setInfoMessage", { message: "ログアウトしました。" })
+     }
+   }
+ }
 </script>

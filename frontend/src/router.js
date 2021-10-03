@@ -1,78 +1,92 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomePage from '@/pages/HomePage'
-import LoginPage from '@/pages/LoginPage'
-import store from '@/store'
+import Vue from "vue"
+import VueRouter from "vue-router"
+import store from "@/store"
+import HomePage from "@/pages/HomePage.vue"
+import LoginPage from "@/pages/auth/LoginPage.vue"
+import SignupPage from "@/pages/auth/SignupPage.vue"
+import PasswordResetPage from "@/pages/auth/PasswordResetPage.vue"
+import PasswordChangePage from "@/pages/auth/PasswordChangePage.vue"
+import AccountMenuPage from "@/pages/auth/AccountMenuPage.vue"
+import NotFoundPage from "@/pages/NotFoundPage.vue"
 
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   // ログインが必要な画面には「requiresAuth」フラグを付けておく
+  // ログイン時には表示しない画面には「requiresNotAuth」フラグを付けておく
   routes: [
-    { path: '/', component: HomePage, meta: { requiresAuth: true } },
-    { path: '/login', component: LoginPage },
-    { path: '*', redirect: '/' }
+    { path: "/", component: HomePage, meta: { requiresAuth: true } },
+    { path: "/login", component: LoginPage, meta: { requiresNotAuth: true } },
+    { path: "/signup", component: SignupPage, meta: { requiresNotAuth: true } },
+    { path: "/activate/:uid/:token", component: SignupPage, meta: { requiresNotAuth: true } },
+    { path: "/password/reset", component: PasswordResetPage },
+    { path: "/password/reset/confirm/:uid/:token", component: PasswordResetPage },
+    { path: "/password/change", component: PasswordChangePage, meta: { requiresAuth: true } },
+    { path: "/account", component: AccountMenuPage, meta: { requiresAuth: true } }, 
+    { path: "*", component: NotFoundPage }
   ]
 })
 
-/**
- * Routerによって画面遷移する際に毎回実行される
- */
+// 画面遷移の直前に毎回実行されるナビゲーションガード
 router.beforeEach((to, from, next) => {
+  const isLoggedIn = store.state.auth.isLoggedIn
+  const token = localStorage.getItem("access")
+  console.log("to.path=", to.path)
+  console.log("isLoggedIn=", isLoggedIn)
 
-  const isLoggedIn = store.getters['auth/isLoggedIn']
-  const token = localStorage.getItem('access')
-  console.log('to.path=', to.path)
-  console.log('isLoggedIn=', isLoggedIn)
+  // 通知をクリア
+  store.dispatch("message/clearMessages")
 
-  // ログインが必要な画面に遷移しようとした場合
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-
-    // ログインしている状態の場合
-    if (isLoggedIn) {
-      console.log('User is already logged in. So, free to next.')
-      next()
-
-      // ログインしていない状態の場合
+  if (!isLoggedIn) {
+    // 未ログイン時→ログイン操作を試みる
+    console.log("User is not logged in.")
+    if (token != null) {
+      // 認証用トークンが残っていればユーザー情報を再取得
+      console.log("Trying to renew user info.")
+      store.dispatch("auth/renew")
+	     .then(() => {
+	       console.log("Succeeded to renew.")
+	       goNotAuthOrHome(to, next)
+	     })
+	     .catch(() => {
+	       goLoginOrPublic(to, next)
+	     })
     } else {
-      // まだ認証用トークンが残っていればユーザー情報を再取得
-      if (token != null) {
-        console.log('User is not logged in. Trying to reload again.')
-
-        store.dispatch('auth/reload')
-          .then(() => {
-            // 再取得できたらそのまま次へ
-            console.log('Succeeded to reload. So, free to next.')
-            next()
-          })
-          .catch(() => {
-            // 再取得できなければログイン画面へ
-            forceToLoginPage(to, from, next)
-          })
-      } else {
-        // 認証用トークンが無い場合は、ログイン画面へ
-        forceToLoginPage(to, from, next)
-      }
+      // 認証用トークンが残っていなければ、ログイン画面へ強制遷移 or そのまま続行
+      goLoginOrPublic(to, next)
     }
-
   } else {
-    // ログインが不要な画面であればそのまま次へ
-    console.log('Go to public page.')
-    next()
+    // ログインしている場合
+    goNotAuthOrHome(to, next)
   }
 })
 
-/**
- * ログイン画面へ強制送還
- */
-function forceToLoginPage (to, from, next) {
-  console.log('Force user to login page.')
-  next({
-    path: '/login',
-    // 遷移先のURLはクエリ文字列として付加
-    query: { next: to.fullPath }
-  })
+function goNotAuthOrHome(to, next) {
+  // ログイン済み かつ requiresNotAuthがtrue→ホーム画面にリダイレクト
+  const isLoggedIn = store.state.auth.isLoggedIn
+  if (isLoggedIn && to.matched.some(element => element.meta.requiresNotAuth)) {
+    console.log("Force to Home page.")
+    next("/")
+  } else {
+    console.log("Go to next page.")
+    next()
+  }
+}
+
+function goLoginOrPublic(to, next) {
+  // requiresAuthがtrueなら、ログイン画面へ遷移
+  if (to.matched.some(element => element.meta.requiresAuth)) {
+    console.log("Force to Login page.")
+    next({
+      path: "/login",
+      query: { next: to.fullPath }
+    })
+  } else {
+    // ログインが不要であればそのまま次へ
+    console.log("Go to public page.")
+    next()
+  }
 }
 
 export default router
