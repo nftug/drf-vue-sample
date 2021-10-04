@@ -22,7 +22,6 @@ const ListGettable = {
   methods: {
     // 検索ページ表示
     searchQuery: function() {
-      this.getListFromAPI()
       this.$router.push({
 	path: this.$route.path,
 	query: {
@@ -67,6 +66,7 @@ const ListGettable = {
 	    })
 	  })
 	}
+	this.loading = false
       })
     }
   }
