@@ -45,10 +45,10 @@ router.beforeEach((to, from, next) => {
     console.log("User is not logged in.")
     if (token != null) {
       // 認証用トークンが残っていればユーザー情報を再取得
-      console.log("Trying to renew user info.")
-      store.dispatch("auth/renew")
+      console.log("Trying to reload user info.")
+      store.dispatch("auth/reload")
 	     .then(() => {
-	       console.log("Succeeded to renew.")
+	       console.log("Succeeded to reload.")
 	       goNextOrHome(to, next)
 	     })
 	     .catch(() => {
