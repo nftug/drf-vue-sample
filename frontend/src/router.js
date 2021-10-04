@@ -41,7 +41,7 @@ router.beforeEach((to, from, next) => {
   }
 
   if (!isLoggedIn) {
-    // 未ログイン時→ログイン操作を試みる
+    // 未ログイン時→ユーザー情報取得を試行
     console.log("User is not logged in.")
     if (token != null) {
       // 認証用トークンが残っていればユーザー情報を再取得
@@ -59,7 +59,7 @@ router.beforeEach((to, from, next) => {
       goLoginOrPublic(to, next)
     }
   } else {
-    // ログインしている場合
+    // ログインしている場合、そのまま続行
     goNextOrHome(to, next)
   }
 })

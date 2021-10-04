@@ -45,7 +45,6 @@
 	 return this.$store.state.message.info.length > 0
        },
        set(value) {
-	 // this.$store.commit("setShowAlert", value)
 	 this.$store.dispatch("message/setInfoMessage", { message: value })
        }
      }
