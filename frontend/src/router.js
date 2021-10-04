@@ -60,7 +60,7 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // ログインしている場合
-    goNotAuthOrHome(to, next)
+    goNextOrHome(to, next)
   }
 })
 
