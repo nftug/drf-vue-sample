@@ -2,98 +2,84 @@
   <div id="password-reset-page">
     <!-- リセットページ -->
     <template v-if="$route.params.uid && $route.params.token">
-      <GlobalHeader />
-      <GlobalMessage />
-
       <!-- メインエリア -->
-      <b-container class="py-5">
-	<b-row>
-	  <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
-	    <p class="h2 mt-4 mb-5">パスワードのリセット</p>
-	    <p>パスワードをリセットします。</p>
-	    
-	    <b-form v-on:submit.prevent="submitPasswordResetConfirm">
-	      <b-form-group label="新しいパスワード" label-for="new_password">
-		<b-input
-		  type="password"
-		  v-model="form.values.new_password"
-		  id="new_password"
-		  placeholder="新しいパスワード"
-		  required
-		  :state="form.warnings.new_password.length ? false : null" 
-		  @input="form.warnings.new_password = []" />
-		<b-form-invalid-feedback
-		  v-for="(warning, index) in form.warnings.new_password"
-		  :key="index">
-		  {{ warning }}
-		</b-form-invalid-feedback>
-	      </b-form-group>
-	      <b-form-group label="新しいパスワード (確認用)" label-for="re_new_password">
-		<b-input
-		  type="password"
-		  v-model="form.values.re_new_password"
-		  id="re_new_password"
-		  placeholder="新しいパスワード (確認用)"
-		  required
-		  :state="form.warnings.re_new_password.length ? false : null"
-		  @input="form.warnings.re_new_password = []" />
-		<b-form-invalid-feedback
-		  v-for="(warning, index) in form.warnings.re_new_password"
-		  :key="index">
-		  {{ warning }}
-		</b-form-invalid-feedback>
-	      </b-form-group>
+      <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
+	<p class="h2 mt-4 mb-5">パスワードのリセット</p>
+	<p>パスワードをリセットします。</p>
+	
+	<b-form v-on:submit.prevent="submitPasswordResetConfirm">
+	  <b-form-group label="新しいパスワード" label-for="new_password">
+	    <b-input
+	      type="password"
+	      v-model="form.values.new_password"
+	      id="new_password"
+	      placeholder="新しいパスワード"
+	      required
+	      :state="form.warnings.new_password.length ? false : null" 
+	      @input="form.warnings.new_password = []" />
+	    <b-form-invalid-feedback
+	      v-for="(warning, index) in form.warnings.new_password"
+	      :key="index">
+	      {{ warning }}
+	    </b-form-invalid-feedback>
+	  </b-form-group>
+	  <b-form-group label="新しいパスワード (確認用)" label-for="re_new_password">
+	    <b-input
+	      type="password"
+	      v-model="form.values.re_new_password"
+	      id="re_new_password"
+	      placeholder="新しいパスワード (確認用)"
+	      required
+	      :state="form.warnings.re_new_password.length ? false : null"
+	      @input="form.warnings.re_new_password = []" />
+	    <b-form-invalid-feedback
+	      v-for="(warning, index) in form.warnings.re_new_password"
+	      :key="index">
+	      {{ warning }}
+	    </b-form-invalid-feedback>
+	  </b-form-group>
 
-	      <div class="mt-4">
-		<b-button type="submit" variant="primary" class="w-100">
-		  パスワードのリセット
-		</b-button>
-	      </div>
-	    </b-form>
+	  <div class="mt-4">
+	    <b-button type="submit" variant="primary" class="w-100">
+	      パスワードのリセット
+	    </b-button>
 	  </div>
-	</b-row>
-      </b-container>
+	</b-form>
+      </div>
     </template>
 
     <!-- ユーザー登録フォームページ -->
     <template v-else>
-      <GlobalHeader />
-      <GlobalMessage />
-
       <!-- メインエリア -->
-      <b-container class="py-5">
-	<b-row>
-	  <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
-	    <p class="h2 mt-4 mb-5">パスワードのリセット</p>
-	    <p>パスワードリセット用のメールを送信します。</p>
+      <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
+	<p class="h2 mt-4 mb-5">パスワードのリセット</p>
+	<p>パスワードリセット用のメールを送信します。</p>
 
-	    <b-form v-on:submit.prevent="submitPasswordReset">
-	      <b-form-group label="メールアドレス" label-for="email">
-		<b-input
-		  type="email"
-		  v-model="form.values.email"
-		  id="email"
-		  placeholder="メールアドレス"
-		  required
-		  :state="form.warnings.email.length ? false: null" 
-		  @input="form.warnings.email = []" />
-		<b-form-invalid-feedback
-		  v-for="(warning, index) in form.warnings.email"
-		  :key="index">
-		  {{ warning }}
-		</b-form-invalid-feedback>
-	      </b-form-group>
+	<b-form v-on:submit.prevent="submitPasswordReset">
+	  <b-form-group label="メールアドレス" label-for="email">
+	    <b-input
+	      type="email"
+	      v-model="form.values.email"
+	      id="email"
+	      placeholder="メールアドレス"
+	      required
+	      :state="form.warnings.email.length ? false: null" 
+	      @input="form.warnings.email = []" />
+	    <b-form-invalid-feedback
+	      v-for="(warning, index) in form.warnings.email"
+		     :key="index">
+	      {{ warning }}
+	    </b-form-invalid-feedback>
+	  </b-form-group>
 
-	      <div class="mt-4">
-		<b-button type="submit" variant="primary" class="w-100">
-		  <font-awesome-icon icon="envelope" />
-		  メールを送信
-		</b-button>
-	      </div>
-	    </b-form>
+	  <div class="mt-4">
+	    <b-button type="submit" variant="primary" class="w-100">
+	      <font-awesome-icon icon="envelope" />
+	      メールを送信
+	    </b-button>
 	  </div>
-	</b-row>
-      </b-container>
+	</b-form>
+      </div>
     </template>
 
   </div>
@@ -101,16 +87,10 @@
 
 <script>
  import api from "@/services/api"
- import GlobalHeader from "@/components/GlobalHeader.vue"
- import GlobalMessage from "@/components/GlobalMessage.vue"
 
  export default {
    metaInfo: {
      title: "パスワードのリセット"
-   },
-   components: {
-     GlobalHeader,
-     GlobalMessage
    },
    data() {
      return {
@@ -167,7 +147,7 @@
 	   re_new_password: this.form.values.re_new_password
 	 }
        }).then(() => {
-	 // ログイン時は強制的にログアウト
+	 // リセット後は強制的にログアウト
 	 if (this.$store.state.auth.isLoggedIn) {
 	   console.log("Logout.")
 	   this.$store.dispatch("auth/logout")

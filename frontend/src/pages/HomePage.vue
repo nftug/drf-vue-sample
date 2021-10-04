@@ -1,74 +1,69 @@
 <template>
   <div id="home-page">
-    <GlobalHeader />
-    <GlobalMessage />
-
     <!-- メインエリア -->
-    <b-container class="py-5">
-      <b-row class="justify-content-between">
-	<b-col cols="12" md="4">
-	  <b-button variant="primary" @click="showBookAddModal" :disabled="!$store.state.auth.isLoggedIn">
-	    <font-awesome-icon icon="plus" />
-	    新規作成
-	  </b-button>
-	</b-col>
-	<b-col col xl="4" md="auto">
-	  <form @submit.prevent="searchQuery">
-	    <div class="input-group">
-	      <b-form-input v-model="searchKeyword" placeholder="リスト内を検索" />
-	    </div>
-	  </form>
-	</b-col>
-      </b-row>
-      
-      <div class="my-5">
-	<table class="table table-hover" v-if="objs.length > 0">
-	  <thead>
-	    <tr>
-	      <th scope="col">#</th>
-	      <th scope="col">タイトル</th>
-	      <th scope="col">価格</th>
-	      <th scope="col">ユーザー</th>
-	      <th scope="col" width="250">操作</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	    <tr v-for="(book, index) in objs" :key="book.id">
-	      <th scope="row">{{ index + 1 }}</th>
-	      <td>{{ book.title }}</td>
-	      <td>{{ book.price }}</td>
-	      <td>{{ book.username }}</td>
-	      <td>
-		<b-button class="mr-1" size="sm" variant="primary"
-			  @click="showBookEditModal(book.id)"
-			  :disabled="book.username !== $store.state.auth.username && !$store.state.auth.isSuperuser">
-		  <font-awesome-icon icon="edit" />
-		  編集
-		</b-button>
-		<b-button class="mr-1" size="sm" variant="danger"
-			  @click="showBookDeleteModal(book.id)"
-			  :disabled="book.username !== $store.state.auth.username && !$store.state.auth.isSuperuser">
-		  <font-awesome-icon icon="trash-alt" />
-		  削除
-		</b-button>
-	      </td>
-	    </tr>
-	  </tbody>
-	</table>
-	<div v-else-if="loading">
-	  読み込み中…
-	</div>
-	<div v-else>
-	  結果が見つかりません。
-	</div>
+    <b-row class="justify-content-between">
+      <b-col cols="12" md="4">
+	<b-button variant="primary" @click="showBookAddModal" :disabled="!$store.state.auth.isLoggedIn">
+	  <font-awesome-icon icon="plus" />
+	  新規作成
+	</b-button>
+      </b-col>
+      <b-col col xl="4" md="auto">
+	<form @submit.prevent="searchQuery">
+	  <div class="input-group">
+	    <b-form-input v-model="searchKeyword" placeholder="リスト内を検索" />
+	  </div>
+	</form>
+      </b-col>
+    </b-row>
+    
+    <div class="my-5">
+      <table class="table table-hover" v-if="objs.length > 0">
+	<thead>
+	  <tr>
+	    <th scope="col">#</th>
+	    <th scope="col">タイトル</th>
+	    <th scope="col">価格</th>
+	    <th scope="col">ユーザー</th>
+	    <th scope="col" width="250">操作</th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr v-for="(book, index) in objs" :key="book.id">
+	    <th scope="row">{{ index + 1 }}</th>
+	    <td>{{ book.title }}</td>
+	    <td>{{ book.price }}</td>
+	    <td>{{ book.username }}</td>
+	    <td>
+	      <b-button class="mr-1" size="sm" variant="primary"
+			@click="showBookEditModal(book.id)"
+			:disabled="book.username !== $store.state.auth.username && !$store.state.auth.isSuperuser">
+		<font-awesome-icon icon="edit" />
+		編集
+	      </b-button>
+	      <b-button class="mr-1" size="sm" variant="danger"
+			@click="showBookDeleteModal(book.id)"
+			:disabled="book.username !== $store.state.auth.username && !$store.state.auth.isSuperuser">
+		<font-awesome-icon icon="trash-alt" />
+		削除
+	      </b-button>
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
+      <div v-else-if="loading">
+	読み込み中…
       </div>
+      <div v-else>
+	結果が見つかりません。
+      </div>
+    </div>
 
-      <GlobalPagination
-	:next="pagination.next"
-	:previous="pagination.previous"
-	:total-pages="pagination.totalPages"
-	:current-page="pagination.currentPage" />
-    </b-container>
+    <GlobalPagination
+      :next="pagination.next"
+	       :previous="pagination.previous"
+      :total-pages="pagination.totalPages"
+      :current-page="pagination.currentPage" />
 
     <!-- モーダル定義 -->
     <b-modal
@@ -134,8 +129,6 @@
 <script>
  import api from "@/services/api"
  import ListGettable from "@/mixins"
- import GlobalHeader from "@/components/GlobalHeader.vue"
- import GlobalMessage from "@/components/GlobalMessage.vue"
  import GlobalPagination from "@/components/GlobalPagination.vue"
 
  export default {
@@ -143,8 +136,6 @@
      title: "ホーム"
    },
    components: {
-     GlobalHeader,
-     GlobalMessage,
      GlobalPagination
    },
    mixins: [ListGettable],
