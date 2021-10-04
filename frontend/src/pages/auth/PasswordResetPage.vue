@@ -180,7 +180,7 @@
        }).catch(error => {
 	 // バリデーションNG
 	 Object.keys(error.response.data).forEach(function (key) {
-	   if (key === 'token') {
+	   if (key === 'token' || key === 'uid') {
 	     this.$router.push("/login")
 	     this.$store.dispatch("message/setErrorMessage", {
 	       message: "不正なトークンです。"
