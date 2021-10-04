@@ -11,9 +11,6 @@
 </template>
 
 <script>
- import GlobalHeader from "@/components/GlobalHeader.vue"
- import GlobalMessage from "@/components/GlobalMessage.vue"
-
  export default {
    metaInfo: {
      title: "404 Not Found"

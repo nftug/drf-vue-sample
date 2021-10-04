@@ -25,7 +25,21 @@ const router = new VueRouter({
     { path: "/password/change", component: PasswordChangePage, meta: { requiresAuth: true } },
     { path: "/account", component: AccountMenuPage, meta: { requiresAuth: true } }, 
     { path: "*", component: NotFoundPage }
-  ]
+  ],
+  // 画面遷移時のスクロール
+  scrollBehavior: async (to, from, savedPosition) => {
+    if (savedPosition) {
+      return new Promise((resolve, reject) => {
+	setTimeOut(() => {
+          resolve(savedPosition)
+	})
+      })
+    } else if (to.hash) {
+      return { selector: to.hash }
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 })
 
 // 画面遷移の直前に毎回実行されるナビゲーションガード
