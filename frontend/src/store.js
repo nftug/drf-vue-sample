@@ -43,27 +43,47 @@ const authModule = {
 	  password: payload.password
 	})
 	.then(response => {
-	  // 認証用トークンをlocalStorageに保存
+	  // 認証用トークンとリフレッシュトークンをlocalStorageに保存
 	  localStorage.setItem("access", response.data.access)
+	  localStorage.setItem("refresh", response.data.refresh)
 	  // ユーザー情報を取得してstoreのユーザー情報を更新
-	  return context.dispatch("renew")
+	  return context.dispatch("reload")
 	})
     },
     // ログアウト
     logout(context) {
-      // 認証用トークンをlocalstorageから削除
+      // 認証用トークンとリフレッシュトークンをlocalstorageから削除
       localStorage.removeItem("access")
+      localStorage.removeItem("refresh")
       // storeのユーザー情報をクリア
       context.commit("clear")
     },
     // ユーザー情報更新
-    renew(context) {
+    reload(context) {
       return api.get("/auth/users/me/").then(response => {
 	const user = response.data
 	// storeのユーザー情報を更新
 	context.commit("set", { user: user })
 	return user
       })
+    },
+    // アクセストークンのリフレッシュ
+    refresh(context) {
+      localStorage.removeItem("access")
+      const refresh = localStorage.getItem("refresh")
+
+      if (refresh != null) {
+	return api
+	  .post("/auth/jwt/refresh/", {
+	    refresh: refresh
+	  })
+	  .then(response => {
+	    localStorage.setItem("access", response.data.access)
+	    localStorage.setItem("refresh", refresh)
+	    // ユーザー情報を取得してstoreのユーザー情報を更新
+	    return context.dispatch("reload")
+	  })
+      }
     }
   }
 }

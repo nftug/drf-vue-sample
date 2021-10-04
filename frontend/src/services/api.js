@@ -47,11 +47,33 @@ api.interceptors.response.use(
       if (status === 401) {
 	// 認証エラー
 	const token = localStorage.getItem("access")
-	if (token != null)
-	  message = "ログインの有効期限切れです。"
-	else
-	  message = "認証エラーです。"
-	store.dispatch("auth/logout")
+	const refresh = localStorage.getItem("refresh")
+
+	if (refresh != null && token != null) {
+	  // トークンのリフレッシュ
+	  // 必ずしも結果はエラーではない→returnは必須
+	  console.log("Access token expired. Trying to refresh...")
+	  return store.dispatch("auth/refresh")
+		      .then(() => {
+			console.log("Refresh succeeded. Retrying to request...")
+			// JSON文字列を正しいオブジェクト型に再整形
+			let config = Object.assign({}, error.config)
+			if (typeof config.data === 'string') {
+			  config.data = JSON.parse(config.data)
+			}
+			// リトライ
+			return api(config)
+		      })
+	} else {
+	  if (refresh) {
+	    // リフレッシュ失敗時
+	    message="ログインの有効期限切れです。"
+	  } else {
+	    // 認証エラー
+	    message = "認証エラーです。"
+	  }
+	  store.dispatch("auth/logout")
+	}
       } else if (status === 403) {
 	// 権限エラー
 	message = "権限エラーです。"

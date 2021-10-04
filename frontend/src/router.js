@@ -35,8 +35,10 @@ router.beforeEach((to, from, next) => {
   console.log("to.path=", to.path)
   console.log("isLoggedIn=", isLoggedIn)
 
-  // 通知をクリア
-  store.dispatch("message/clearMessages")
+  // エラーなし→通知をクリア
+  if (!store.state.message.error) {
+    store.dispatch("message/clearMessages")
+  }
 
   if (!isLoggedIn) {
     // 未ログイン時→ログイン操作を試みる
@@ -47,7 +49,7 @@ router.beforeEach((to, from, next) => {
       store.dispatch("auth/renew")
 	     .then(() => {
 	       console.log("Succeeded to renew.")
-	       goNotAuthOrHome(to, next)
+	       goNextOrHome(to, next)
 	     })
 	     .catch(() => {
 	       goLoginOrPublic(to, next)
@@ -62,7 +64,7 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-function goNotAuthOrHome(to, next) {
+function goNextOrHome(to, next) {
   // ログイン済み かつ requiresNotAuthがtrue→ホーム画面にリダイレクト
   const isLoggedIn = store.state.auth.isLoggedIn
   if (isLoggedIn && to.matched.some(element => element.meta.requiresNotAuth)) {
