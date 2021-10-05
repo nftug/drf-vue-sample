@@ -19,7 +19,7 @@
     <!-- 登録フォームページ -->
     <template v-else>
       <!-- メインエリア -->
-      <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
+      <div class="col-xl-4 col-lg-5 col-md-6 col-sm-10 mx-auto">
 	<p class="h2 mt-4 mb-5">ユーザー登録</p>
 	
 	<b-form v-on:submit.prevent="submitSignup">

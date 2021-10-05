@@ -194,7 +194,11 @@
      // 作成・更新ボタン押下
      handleBookFormOk: function(bvModalEvt) {
        bvModalEvt.preventDefault()
-       this.submitForm()
+       this.submitForm().then(() => {
+	 this.$nextTick(() => {
+	   this.$bvModal.hide('modal-book-add-edit')
+	 })
+       })
      },
      // 削除確定ボタン押下
      handleBookDeleteOk: function() {
@@ -210,7 +214,7 @@
      },
      // フォーム送信
      submitForm: function() {
-       api({
+       return api({
 	 // 作成済みかどうかでエンドポイントを切り替える
 	 method: this.isCreated ? "put" : "post",
 	 url: this.isCreated ? "/books/" + this.form.values.id + "/" : "/books/",
@@ -219,10 +223,6 @@
 	 const message = this.form.values.title + (this.isCreated ? "を更新しました。" : "を登録しました。")
 	 this.$store.dispatch("message/setInfoMessage", { message: message })
 	 this.getListFromAPI()
-	 
-	 this.$nextTick(() => {
-	   this.$bvModal.hide('modal-book-add-edit')
-	 })
        }).catch(error => {
 	 // バリデーションNG
 	 Object.keys(error.response.data).forEach(function (key) {
