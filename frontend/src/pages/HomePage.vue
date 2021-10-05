@@ -228,6 +228,7 @@
 	 Object.keys(error.response.data).forEach(function (key) {
 	   this.form.warnings[key] = error.response.data[key]
 	 }, this)
+	 return Promise.reject(error)
        })
      }
    }
