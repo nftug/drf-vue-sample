@@ -6,79 +6,45 @@
       <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
 	<p class="h2 mt-4 mb-5">パスワードのリセット</p>
 	<p>パスワードをリセットします。</p>
-	
-	<b-form v-on:submit.prevent="submitPasswordResetConfirm">
-	  <b-form-group label="新しいパスワード" label-for="new_password">
-	    <b-input
-	      type="password"
-	      v-model="form.values.new_password"
-	      id="new_password"
-	      placeholder="新しいパスワード"
-	      required
-	      :state="form.warnings.new_password.length ? false : null" 
-	      @input="form.warnings.new_password = []" />
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.new_password"
-	      :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
-	  <b-form-group label="新しいパスワード (確認用)" label-for="re_new_password">
-	    <b-input
-	      type="password"
-	      v-model="form.values.re_new_password"
-	      id="re_new_password"
-	      placeholder="新しいパスワード (確認用)"
-	      required
-	      :state="form.warnings.re_new_password.length ? false : null"
-	      @input="form.warnings.re_new_password = []" />
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.re_new_password"
-	      :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
 
-	  <div class="mt-4">
-	    <b-button type="submit" variant="primary" class="w-100">
-	      パスワードのリセット
-	    </b-button>
-	  </div>
-	</b-form>
+	<SendForm
+	  v-model="formResetPassword"
+	  action="/auth/users/reset_password_confirm/"
+	  method="post"
+	  :additional-data="tokenData"
+	  @form-success="onSucceedResetPassword">
+	  <template v-slot:footer>
+	    <div class="mt-4">
+	      <b-button type="submit" variant="primary" class="w-100">
+		パスワードのリセット
+	      </b-button>
+	    </div>
+	  </template>
+	</SendForm>
       </div>
     </template>
 
-    <!-- ユーザー登録フォームページ -->
+    <!-- メール送信ページ -->
     <template v-else>
       <!-- メインエリア -->
       <div class="col-lg-5 col-md-6 col-sm-10 mx-auto">
 	<p class="h2 mt-4 mb-5">パスワードのリセット</p>
 	<p>パスワードリセット用のメールを送信します。</p>
 
-	<b-form v-on:submit.prevent="submitPasswordReset">
-	  <b-form-group label="メールアドレス" label-for="email">
-	    <b-input
-	      type="email"
-	      v-model="form.values.email"
-	      id="email"
-	      placeholder="メールアドレス"
-	      required
-	      :state="form.warnings.email.length ? false: null" 
-	      @input="form.warnings.email = []" />
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.email"
-		     :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
-
-	  <div class="mt-4">
-	    <b-button type="submit" variant="primary" class="w-100">
-	      <font-awesome-icon icon="envelope" />
-	      メールを送信
-	    </b-button>
-	  </div>
-	</b-form>
+	<SendForm
+	  v-model="formEmailPassword"
+	  action="/auth/users/reset_password/"
+	  method="post"
+	  @form-success="onSucceedSendEmail">
+	  <template v-slot:footer>
+	    <div class="mt-4">
+	      <b-button type="submit" variant="primary" class="w-100">
+		<font-awesome-icon icon="envelope" />
+		メールを送信
+	      </b-button>
+	    </div>
+	  </template>
+	</SendForm>
       </div>
     </template>
 
@@ -87,91 +53,57 @@
 
 <script>
  import api from "@/services/api"
+ import SendForm from "@/components/SendForm.vue"
 
  export default {
    metaInfo: {
      title: "パスワードのリセット"
    },
+   components: {
+     SendForm
+   },
    data() {
      return {
-       form: {
-	 values: {  
-	   email: this.$store.state.auth.email,
-	   new_password: "",
-	   re_new_password: ""
-	 },
-	 warnings: { 
-	   email: [],
-	   new_password: [],
-	   re_new_password: []
-	 }
+       formEmailPassword: {
+	 email: { label: "メールアドレス", type: "email", required: true, warnings: [],
+		  value: this.$store.state.auth.email,
+		  readonly: this.$store.state.auth.email.length > 0 }
+       },
+       formResetPassword: {
+	 new_password: { label: "新しいパスワード", type: "password", required: true, value: "", warnings: [] },
+	 re_new_password: { label: "新しいパスワード (確認用)", type: "password", required: true, value: "", warnings: [] }
+       },
+       tokenData: {
+	 uid: this.$route.params.uid,
+	 token: this.$route.params.token
        }
      }
    },
    methods: {
-     // メール送信押下
-     submitPasswordReset: function() {
-       api({
-	 method: "post",
-	 url: "/auth/users/reset_password/",
-	 data: {
-	   email: this.form.values.email
-	 }
-       }).then(() => {
-	 if (this.$store.state.auth.isLoggedIn) {
-	   // ログイン時はアカウント設定メニューに遷移
-	   this.$router.push("/account")
-	 } else {
-	   // ログアウト時はログイン画面に遷移
-	   this.$router.push("/login")
-	 }
-	 this.$store.dispatch("message/setInfoMessage", {
-	   message: "パスワードリセット用のメールを送信しました。"
-	 })
-       }).catch(error => {
-	 // バリデーションNG
-	 Object.keys(error.response.data).forEach(function (key) {
-	   this.form.warnings[key] = error.response.data[key]
-	 }, this)
+     // メール送信成功
+     onSucceedSendEmail: function() {
+       if (this.$store.state.auth.isLoggedIn) {
+	 // ログイン時はアカウント設定メニューに遷移
+	 this.$router.push("/account")
+       } else {
+	 // ログアウト時はログイン画面に遷移
+	 this.$router.push("/login")
+       }
+       this.$store.dispatch("message/setInfoMessage", {
+	 message: "パスワードリセット用のメールを送信しました。"
        })
      },
-     // パスワードリセット押下
-     submitPasswordResetConfirm: function() {
-       api({
-	 method: "post",
-	 url: "/auth/users/reset_password_confirm/",
-	 data: {
-	   uid: this.$route.params.uid,
-	   token: this.$route.params.token,
-	   new_password: this.form.values.new_password,
-	   re_new_password: this.form.values.re_new_password
-	 }
-       }).then(() => {
-	 // リセット後は強制的にログアウト
-	 if (this.$store.state.auth.isLoggedIn) {
-	   console.log("Logout.")
-	   this.$store.dispatch("auth/logout")
-	 }
-	 
-	 this.$router.push("/login")
-	 this.$store.dispatch("message/setInfoMessage", {
-	   message: "パスワードのリセットが完了しました。"
-	 })
-       }).catch(error => {
-	 // バリデーションNG
-	 Object.keys(error.response.data).forEach(function (key) {
-	   if (key === 'token' || key === 'uid') {
-	     this.$router.push("/login")
-	     this.$store.dispatch("message/setErrorMessage", {
-	       message: "不正なトークンです。"
-	     })
-	   } else if (key === 'non_field_errors') {
-	     this.form.warnings['new_password'].push("パスワードが一致しません。")
-	     this.form.warnings['re_new_password'].push("パスワードが一致しません")
-	   } else {
-	     this.form.warnings[key] = error.response.data[key]
-	   }
-	 }, this)
+     // パスワードリセット成功
+     onSucceedResetPassword: function () {
+       // リセット後は強制的にログアウト
+       if (this.$store.state.auth.isLoggedIn) {
+	 console.log("Logout.")
+	 this.$store.dispatch("auth/logout")
+       }
+       
+       this.$router.push("/login")
+       this.$store.dispatch("message/setInfoMessage", {
+	 message: "パスワードのリセットが完了しました。"
        })
      }
    }

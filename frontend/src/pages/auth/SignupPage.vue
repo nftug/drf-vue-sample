@@ -21,76 +21,22 @@
       <!-- メインエリア -->
       <div class="col-xl-4 col-lg-5 col-md-6 col-sm-10 mx-auto">
 	<p class="h2 mt-4 mb-5">ユーザー登録</p>
+
+	<SendForm
+	  v-model="formSignup"
+	  action="/auth/users/"
+	  method="post"
+	  @form-success="onSucceedSend">
+	  <template v-slot:footer>
+	    <div class="mt-4">
+	      <b-button type="submit" variant="primary" class="w-100">
+		<font-awesome-icon icon="user-plus" />
+		ユーザー登録
+	      </b-button>
+	    </div>
+	  </template>
+	</SendForm>
 	
-	<b-form v-on:submit.prevent="submitSignup">
-	  <b-form-group label="ユーザー名" label-for="username">
-	    <b-input
-	      type="text"
-	      v-model="form.values.username"
-	      id="username"
-	      placeholder="ユーザー名"
-	      required
-	      :state="form.warnings.username.length ? false : null"
-	      @input="form.warnings.username = []"/>
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.username"
-		     :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
-	  <b-form-group label="メールアドレス" label-for="email">
-	    <b-input
-	      type="email"
-	      v-model="form.values.email"
-	      id="email"
-	      placeholder="メールアドレス"
-	      required
-	      :state="form.warnings.email.length ? false: null" 
-	      @input="form.warnings.email = []" />
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.email"
-		     :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
-	  <b-form-group label="パスワード" label-for="password">
-	    <b-input
-	      type="password"
-	      v-model="form.values.password"
-	      id="password"
-	      placeholder="パスワード"
-	      required
-	      :state="form.warnings.password.length ? false : null" 
-	      @input="form.warnings.password = []" />
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.password"
-		     :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
-	  <b-form-group label="パスワード (確認用)" label-for="re_password">
-	    <b-input
-	      type="password"
-	      v-model="form.values.re_password"
-	      id="re_password"
-	      placeholder="パスワード (確認用)"
-	      required
-	      :state="form.warnings.re_password.length ? false : null"
-	      @input="form.warnings.re_password = []" />
-	    <b-form-invalid-feedback
-	      v-for="(warning, index) in form.warnings.re_password"
-		     :key="index">
-	      {{ warning }}
-	    </b-form-invalid-feedback>
-	  </b-form-group>
-	  
-	  <div class="mt-4">
-	    <b-button type="submit" variant="primary" class="w-100">
-	      <font-awesome-icon icon="user-plus" />
-	      ユーザー登録
-	    </b-button>
-	  </div>
-	</b-form>
       </div>
     </template>
 
@@ -99,26 +45,22 @@
 
 <script>
  import api from "@/services/api"
+ import SendForm from "@/components/SendForm.vue"
  
  export default {
    metaInfo: {
      title: "ユーザー登録"
    },
+   components: {
+     SendForm
+   },
    data() {
      return {
-       form: {
-	 values: {
-	   username: "",  
-	   email: "",
-	   password: "",
-	   re_password: ""
-	 },
-	 warnings: {
-	   username: [],  
-	   email: [],
-	   password: [],
-	   re_password: []
-	 }
+       formSignup: {
+	 username: { label: "ユーザー名", type: "text", required: true, value: "", warnings: [] },
+	 email: { label: "メールアドレス", type: "email", required: true, value: "", warnings: [] },
+	 password: { label: "パスワード", type: "password", required: true, value: "", warnings: [] },
+	 re_password: { label: "パスワード (確認用)", type: "password", required: true, value: "", warnings: [] },
        },
        verificationSent: false
      }
@@ -130,26 +72,9 @@
      }
    },
    methods: {
-     // サインアップ押下
-     submitSignup: function() {
-       api({
-	 method: "post",
-	 url: "/auth/users/",
-	 data: this.form.values
-       }).then(() => {
-	 // 認証メール送信済み
-	 this.verificationSent = true
-       }).catch(error => {
-	 // バリデーションNG
-	 Object.keys(error.response.data).forEach(function (key) {
-	   if (key === 'non_field_errors') {
-	     this.form.warnings['password'].push("パスワードが一致しません。")
-	     this.form.warnings['re_password'].push("パスワードが一致しません")
-	   } else {
-	     this.form.warnings[key] = error.response.data[key]
-	   }
-	 }, this)
-       })
+     // フォーム送信成功
+     onSucceedSend: function(response) {
+       this.verificationSent = true
      },
      // ユーザーのアクティベーション
      activateUser: function() {

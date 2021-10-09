@@ -59,9 +59,9 @@
       </div>
     </div>
 
-    <GlobalPagination
+    <Pagination
       :next="pagination.next"
-	       :previous="pagination.previous"
+      :previous="pagination.previous"
       :total-pages="pagination.totalPages"
       :current-page="pagination.currentPage" />
 
@@ -129,14 +129,14 @@
 <script>
  import api from "@/services/api"
  import ListGettable from "@/mixins"
- import GlobalPagination from "@/components/GlobalPagination.vue"
+ import Pagination from "@/components/Pagination.vue"
 
  export default {
    metaInfo: {
      title: "ホーム"
    },
    components: {
-     GlobalPagination
+     Pagination
    },
    mixins: [ListGettable],
    data() {
