@@ -81,7 +81,7 @@
 	     this.form[`${prefix}password`].warnings.push("パスワードが一致しません。")
 	     this.form[`re_${prefix}password`].warnings.push("パスワードが一致しません。")
 	   } else if (key === 'current_password') {
-	     this.form.warnings[key].push("パスワードが正しくありません。")
+	     this.form.current_password.warnings.push("パスワードが正しくありません。")
 	   } else {
 	     this.form[key].warnings = error.response.data[key]
 	   }
