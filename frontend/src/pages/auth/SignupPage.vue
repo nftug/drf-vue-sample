@@ -2,7 +2,7 @@
   <div id="signup-page">
     <!-- 認証ページ -->
     <template v-if="$route.params.uid && $route.params.token">
-      <p>認証中…</p>
+      <spinner size="large" />
     </template>
 
     <!-- 認証済みページ -->
@@ -45,6 +45,7 @@
 
 <script>
  import api from "@/services/api"
+ import Spinner from "vue-simple-spinner"
  import SendForm from "@/components/SendForm.vue"
  
  export default {
@@ -52,6 +53,7 @@
      title: "ユーザー登録"
    },
    components: {
+     Spinner,
      SendForm
    },
    data() {
@@ -87,12 +89,12 @@
 	 }
        })
 	 .then(() => {
-	   this.$router.replace("/login")
+	   this.$router.replace("/login/")
 	   this.$store.dispatch("message/setInfoMessage", {
 	     message: "アカウントが承認されました。"
 	   })
 	 }).catch(error => {
-	   this.$router.replace("/login")
+	   this.$router.replace("/login/")
 	   const status = error.response ? error.response.status : 500
 	   let message
 

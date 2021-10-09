@@ -19,7 +19,7 @@
 	  </div>
 	  <div class="text-right mt-4 small">
 	    <div class="mb-1">
-	      <router-link class="button secondaryAction" to="/password/reset">パスワードを忘れましたか？</router-link>
+	      <router-link class="button secondaryAction" to="/password/reset/">パスワードを忘れましたか？</router-link>
 	    </div>
 	  </div>
 	</template>
@@ -52,7 +52,7 @@
    methods: {
      // パスワード変更押下
      onSucceedChangePassword: function() {
-       this.$router.push("/account")
+       this.$router.push("/account/")
        this.$store.dispatch("message/setInfoMessage", {
 	 message: "パスワードを変更しました。"
        })

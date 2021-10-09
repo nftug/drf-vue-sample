@@ -1,15 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <title>DRF Sample</title>
+    <link rel="shortcut icon" href="{% static '<%= htmlWebpackPlugin.files.favicon %>' %}">
+    <% for (key in htmlWebpackPlugin.files.css) { %> <link rel="stylesheet" href="{% static '<%= htmlWebpackPlugin.files.css[key] %>' %}"> <% } %>
   </head>
   <body>
     <noscript>
+      このサイトの利用にはJavaScriptの有効化が必要です。
     </noscript>
     <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <% for (key in htmlWebpackPlugin.files.js) { %> <script type="text/javascript" src="{% static '<%= htmlWebpackPlugin.files.js[key] %>' %}"></script> <% } %>
   </body>
 </html>

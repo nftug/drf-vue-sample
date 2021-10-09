@@ -17,13 +17,13 @@ const router = new VueRouter({
   // ログイン時には表示しない画面には「requiresNotAuth」フラグを付けておく
   routes: [
     { path: "/", component: HomePage, meta: { requiresAuth: true } },
-    { path: "/login", component: LoginPage, meta: { requiresNotAuth: true } },
-    { path: "/signup", component: SignupPage, meta: { requiresNotAuth: true } },
-    { path: "/activate/:uid/:token", component: SignupPage, meta: { requiresNotAuth: true } },
-    { path: "/password/reset", component: PasswordResetPage },
-    { path: "/password/reset/confirm/:uid/:token", component: PasswordResetPage },
-    { path: "/password/change", component: PasswordChangePage, meta: { requiresAuth: true } },
-    { path: "/account", component: AccountMenuPage, meta: { requiresAuth: true } }, 
+    { path: "/login/", component: LoginPage, meta: { requiresNotAuth: true } },
+    { path: "/signup/", component: SignupPage, meta: { requiresNotAuth: true } },
+    { path: "/activate/:uid/:token/", component: SignupPage, meta: { requiresNotAuth: true } },
+    { path: "/password/reset/", component: PasswordResetPage },
+    { path: "/password/reset/confirm/:uid/:token/", component: PasswordResetPage },
+    { path: "/password/change/", component: PasswordChangePage, meta: { requiresAuth: true } },
+    { path: "/account/", component: AccountMenuPage, meta: { requiresAuth: true } }, 
     { path: "*", component: NotFoundPage }
   ],
   // 画面遷移時のスクロール
@@ -95,7 +95,7 @@ function goLoginOrPublic(to, next) {
   if (to.matched.some(element => element.meta.requiresAuth)) {
     console.log("Force to Login page.")
     next({
-      path: "/login",
+      path: "/login/",
       query: { next: to.fullPath }
     })
   } else {

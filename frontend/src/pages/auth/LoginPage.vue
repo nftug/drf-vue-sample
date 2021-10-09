@@ -22,10 +22,10 @@
 
 	<div class="text-right mt-4 small">
 	  <div class="mb-1">
-	    <router-link class="button secondaryAction" to="/password/reset">パスワードを忘れましたか？</router-link>
+	    <router-link class="button secondaryAction" to="/password/reset/">パスワードを忘れましたか？</router-link>
 	  </div>
 	  <div class="mb-1">
-	    <router-link class="button secondaryAction" to="/signup">アカウントを新規作成</router-link>
+	    <router-link class="button secondaryAction" to="/signup/">アカウントを新規作成</router-link>
 	  </div>
 	</div>
       </b-form>

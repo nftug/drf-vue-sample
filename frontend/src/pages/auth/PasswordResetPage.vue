@@ -84,10 +84,10 @@
      onSucceedSendEmail: function() {
        if (this.$store.state.auth.isLoggedIn) {
 	 // ログイン時はアカウント設定メニューに遷移
-	 this.$router.push("/account")
+	 this.$router.push("/account/")
        } else {
 	 // ログアウト時はログイン画面に遷移
-	 this.$router.push("/login")
+	 this.$router.push("/login/")
        }
        this.$store.dispatch("message/setInfoMessage", {
 	 message: "パスワードリセット用のメールを送信しました。"
@@ -101,7 +101,7 @@
 	 this.$store.dispatch("auth/logout")
        }
        
-       this.$router.push("/login")
+       this.$router.push("/login/")
        this.$store.dispatch("message/setInfoMessage", {
 	 message: "パスワードのリセットが完了しました。"
        })
