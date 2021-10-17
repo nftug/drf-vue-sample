@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     // フォーム送信成功
-    onSucceedSend: function (response) {
+    onSucceedSend: function () {
       this.verificationSent = true
     },
     // ユーザーのアクティベーション

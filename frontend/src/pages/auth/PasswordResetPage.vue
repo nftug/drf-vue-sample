@@ -53,7 +53,6 @@
 </template>
 
 <script>
-import api from '@/services/api'
 import SendForm from '@/components/SendForm.vue'
 
 export default {
