@@ -48,8 +48,8 @@ const router = new VueRouter({
   // 画面遷移時のスクロール
   scrollBehavior: async (to, from, savedPosition) => {
     if (savedPosition) {
-      return new Promise((resolve, reject) => {
-        setTimeOut(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
           resolve(savedPosition)
         })
       })
