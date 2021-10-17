@@ -1,5 +1,14 @@
 module.exports = {
-  extends: ['plugin:vue/base'],
+  env: {
+    node: true,
+    commonjs: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:vue/base',
+    'plugin:vue/essential',
+    'prettier',
+  ],
   rules: {
     'no-console': 'off',
   },
