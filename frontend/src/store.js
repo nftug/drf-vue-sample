@@ -68,7 +68,7 @@ const authModule = {
       })
     },
     // アクセストークンのリフレッシュ
-    refresh(context) {
+    refresh() {
       localStorage.removeItem('access')
       const refresh = localStorage.getItem('refresh')
 
@@ -80,8 +80,7 @@ const authModule = {
           .then((response) => {
             localStorage.setItem('access', response.data.access)
             localStorage.setItem('refresh', refresh)
-            // ユーザー情報を取得してstoreのユーザー情報を更新
-            return context.dispatch('reload')
+            return response.data.access
           })
       }
     },
